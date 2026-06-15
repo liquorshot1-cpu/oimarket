@@ -29,7 +29,11 @@ export async function updateSession(request: NextRequest) {
 
   // getClaims()는 JWT 서명을 검증하므로 서버에서 신뢰할 수 있습니다.
   // 이 호출 사이에 다른 로직을 넣지 마세요(토큰 갱신 타이밍이 깨질 수 있음).
-  await supabase.auth.getClaims();
+  try {
+    await supabase.auth.getClaims();
+  } catch {
+    // Supabase 연결 오류 시 503 대신 요청을 그냥 통과시킵니다.
+  }
 
   return supabaseResponse;
 }
